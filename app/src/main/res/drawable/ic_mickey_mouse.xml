@@ -1,0 +1,33 @@
+<!--
+  ~ /*
+  ~  * Copyright 2021 HyperDevs
+  ~  *
+  ~  * Licensed under the Apache License, Version 2.0 (the "License");
+  ~  * you may not use this file except in compliance with the License.
+  ~  * You may obtain a copy of the License at
+  ~  *
+  ~  *    http://www.apache.org/licenses/LICENSE-2.0
+  ~  *
+  ~  * Unless required by applicable law or agreed to in writing, software
+  ~  * distributed under the License is distributed on an "AS IS" BASIS,
+  ~  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  * See the License for the specific language governing permissions and
+  ~  * limitations under the License.
+  ~  */
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="296.8dp"
+    android:viewportWidth="360"
+    android:viewportHeight="296.8">
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M0,64.5a64.8,64.5 0,1 0,129.6 0a64.8,64.5 0,1 0,-129.6 0z"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M230.5,64.5a64.8,64.5 0,1 0,129.6 0a64.8,64.5 0,1 0,-129.6 0z"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M69,185.7a111,111.2 0,1 0,222 0a111,111.2 0,1 0,-222 0z"/>
+</vector>

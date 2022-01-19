@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# /*
+#  * Copyright 2021 HyperDevs
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License");
+#  * you may not use this file except in compliance with the License.
+#  * You may obtain a copy of the License at
+#  *
+#  *    http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software
+#  * distributed under the License is distributed on an "AS IS" BASIS,
+#  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  * See the License for the specific language governing permissions and
+#  * limitations under the License.
+#  */
+#
+
+##########################
+# Verifies that commit messages conform to a given regular expression.
+#
+# Change the regular expression to verify by changing COMMIT_MSG_REGEX.
+##########################
+
+# Commit message regex, contains project code, so customize it!
+COMMIT_MSG_REGEX="(\(TBD-[0-9]+\)) (.*)"
+
+# Misc variables
+BOLD=$(tput bold)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+NO_STYLE=$(tput sgr0)
+
+echo "${BOLD}Verifying commit message${NO_STYLE}"
+# Get commit message
+commit_msg=$(cat "$1")
+# Allow us to read user input below, assigns stdin to keyboard
+exec < /dev/tty
+# If the commit message does not match the regex, do stuff
+if echo "$commit_msg" | grep -qE "$COMMIT_MSG_REGEX"; then
+  echo "${GREEN}The commit message is OK!${NO_STYLE}"
+else
+  printf "%s" "${YELLOW}The commit message does not contain an issue code, are you sure you want to commit this?${NO_STYLE} (y/n): "
+  read -r yn
+  if [ "$yn" = "" ]; then
+    yn='Y'
+  fi
+  case $yn in
+      [Yy] ) echo "${YELLOW}OK, commiting anyway${NO_STYLE}";;
+      * ) echo "${RED}You didn't add a issue code, aborting commit...${NO_STYLE}"; exit 1;;
+  esac
+fi
+
+exec <&-

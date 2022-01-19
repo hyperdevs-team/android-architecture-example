@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ /*
+  ~  * Copyright 2021 HyperDevs
+  ~  *
+  ~  * Licensed under the Apache License, Version 2.0 (the "License");
+  ~  * you may not use this file except in compliance with the License.
+  ~  * You may obtain a copy of the License at
+  ~  *
+  ~  *    http://www.apache.org/licenses/LICENSE-2.0
+  ~  *
+  ~  * Unless required by applicable law or agreed to in writing, software
+  ~  * distributed under the License is distributed on an "AS IS" BASIS,
+  ~  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  * See the License for the specific language governing permissions and
+  ~  * limitations under the License.
+  ~  */
+  -->
+
+<resources>
+    <string name="get_characters_list_error_message">"Error al obtener la lista de personajes Disney"</string>
+    <string name="character_error_message">"Error al obtener el personaje Disney seleccionado"</string>
+    <string name="character_films">"Películas:"</string>
+    <string name="character_image_content_description">"Imagen de %1$s"</string>
+    <string name="refresh">"Actualizar"</string>
+    <string name="top_app_bar_search">"Lo buscaría, pero soy vago…"</string>
+    <string name="top_app_bar_favorite">"¡Soy tu favorito!"</string>
+    <string name="generic_error_dialog_title">"An error has occurred"</string>
+    <string name="generic_error_dialog_message">"Please try later"</string>
+
+    <!-- Validations-->
+    <string name="form_name_field_error">"Por favor, introduce tu nombre"</string>
+    <string name="form_last_name_field_error">"Por favor, introduce tus apellidos"</string>
+    <string name="form_password_field_length_error">"La contraseña debe contener al menos 6 caracteres"</string>
+    <string name="form_generic_field_required_error">"Este campo es obligatorio"</string>
+    <string name="form_invalid_length_exact_error">"Este campo debe tener %1$s caracteres"</string>
+    <string name="form_invalid_length_error">"Este campo debe tener al menos %1$s caracteres"</string>
+    <string name="form_email_field_empty_error">"Por favor, introduce tu e-mail"</string>
+    <string name="form_email_field_wrong_format_error">"Por favor, introduce un e-mail válido"</string>
+    <string name="form_password_field_empty_error">"Por favor, introduce la contraseña"</string>
+    <string name="form_confirm_password_do_not_match">"Las contraseñas no coinciden"</string>
+    <string name="form_phone_field_empty_error">"Por favor, introduce un número de teléfono válido"</string>
+</resources>

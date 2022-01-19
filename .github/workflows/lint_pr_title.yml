@@ -1,0 +1,17 @@
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+name: Lint Pull Requests
+
+jobs:
+  pr-lint:
+    name: Lint PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: morrisoncole/pr-lint-action@v1.4.1
+        with:
+          title-regex: '^(\(TBD-[0-9]+\)) (.*)'
+          on-failed-regex-comment:
+            ":warning: @${{ github.actor }} **Are you sure you want to leave the PR title with no issue code?**"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

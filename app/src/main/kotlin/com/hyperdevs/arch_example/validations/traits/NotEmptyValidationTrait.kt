@@ -1,0 +1,55 @@
+/*
+ *
+ *  * Copyright 2021 HyperDevs
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
+package com.hyperdevs.arch_example.validations.traits
+
+import com.hyperdevs.arch_example.validations.ValidationStatus
+import com.hyperdevs.arch_example.validations.ValidationViewData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+/**
+ * Trait for ViewModels that need not empty validations.
+ */
+interface NotEmptyValidationTrait {
+    val notEmptyValueValidation: MutableStateFlow<ValidationViewData?>
+
+    /**
+     * Validates the value is not empty.
+     * CONTRACT: emits result via [notEmptyValueValidation]
+     */
+    fun validateEmptyValue(value: String)
+
+    @Suppress("UndocumentedPublicFunction")
+    fun getNotEmptyValueValidation(): StateFlow<ValidationViewData?> = notEmptyValueValidation
+}
+
+/**
+ * Implementation of [NotEmptyValidationTrait].
+ */
+class NotEmptyValidationTraitImpl : NotEmptyValidationTrait {
+    override val notEmptyValueValidation = MutableStateFlow<ValidationViewData?>(null)
+
+    override fun validateEmptyValue(value: String) {
+        notEmptyValueValidation.value = validateFrom(value)
+    }
+
+    private fun validateFrom(value: String): ValidationViewData =
+        if (value.isBlank()) ValidationViewData(ValidationStatus.Required)
+        else ValidationViewData(ValidationStatus.Valid)
+}

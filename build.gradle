@@ -1,0 +1,64 @@
+/*
+ *
+ *  * Copyright 2021 HyperDevs
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+        kotlin_version = "1.6.0"
+        compose_version = "1.1.0-rc01"
+        detekt_version = "1.19.0"
+    }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.hyperdevs-team:poeditor-android-gradle-plugin:2.4.2"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
+        classpath "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
+        classpath "com.gladed.androidgitversion:gradle-android-git-version:0.4.14"
+        classpath "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:1.0.1"
+        classpath "com.project.starter:easylauncher:5.0.0"
+
+//        classpath "com.google.gms:google-services:4.3.10"
+//        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+task installGitHooks(type: Copy) {
+    def baseHooksDir = new File(new File(rootProject.rootDir, "scripts"), "hooks")
+    from new File(baseHooksDir, "pre-commit"), new File(baseHooksDir, "commit-msg")
+    into new File(rootProject.rootDir, ".git/hooks")
+    fileMode 0755
+}
+
+// Install hooks automatically before cleaning or building a new compilation
+// Idea from: https://gist.github.com/KenVanHoeylandt/c7a928426bce83ffab400ab1fd99054a
+clean.dependsOn(installGitHooks)
+tasks.getByPath(":app:preBuild").dependsOn(installGitHooks)

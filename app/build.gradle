@@ -1,0 +1,357 @@
+/*
+ *
+ *  * Copyright 2021 HyperDevs
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
+plugins {
+    id 'com.android.application'
+
+    id 'kotlin-android'
+    id "kotlin-kapt"
+
+    id 'io.gitlab.arturbosch.detekt'
+    id 'com.gladed.androidgitversion'
+
+    id "dev.zacsweers.redacted"
+    id "com.starter.easylauncher"
+
+    id "com.hyperdevs.poeditor"
+
+//    id "com.google.gms.google-services"
+}
+
+apply from: "$rootDir/gradle/properties_utils.gradle"
+
+androidGitVersion {
+    codeFormat "MNNPP"
+    tagPattern(/^[0-9]+.*/) // Tag names should follow the pattern vM.NN.PP
+}
+
+ext {
+
+    /*
+     ********************
+     *
+     * Android variables
+     *
+     ********************
+     */
+    compile_sdk_version = 31
+    min_sdk_version = 22
+    target_sdk_version = 31
+    build_tools_version = "30.0.3"
+
+    // The Android version is multiplied by a big number so it is placed in the leftmost part
+    // of the version code because we can't add it in androidGitVersion's codeFormat parameter
+    version_code = compile_sdk_version * 100000 + androidGitVersion.code()
+    version_name = androidGitVersion.name()
+
+    /*
+     *******************
+     *
+     * Library versions
+     *
+     *******************
+     */
+    mini_version = "3.0.0"
+    kodein_version = "7.10.0"
+    retrofit_version = "2.9.0"
+    okhttp_version = "4.9.1"
+    moshi_version = "1.13.0"
+    accompanist_version = "0.20.3"
+
+    poeditor_api_token = loadPropertiesFile("settings.properties")["poEditorApiToken"] ?: ""
+}
+
+android {
+    compileSdk compile_sdk_version
+    buildToolsVersion build_tools_version
+
+    defaultConfig {
+        applicationId "com.hyperdevs.arch_example"
+        minSdk min_sdk_version
+        targetSdk target_sdk_version
+        versionCode version_code
+        versionName version_name
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        // Placeholders so we can use the resources without the IDE marking errors
+        resValue "string", "app_name", "Arch Example"
+
+        // Change the base name of the generated APK to match the project name and include the
+        // binary version
+        project.archivesBaseName = "${rootProject.name}-${version_name}"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // Declare one dimension: env -> environments
+    flavorDimensions "env"
+
+    productFlavors {
+        // Development environment: environment where developers can work and add the latest changes to the codebase.
+        development {
+            // Makes this flavor the default flavor in AS 3.5+: https://stackoverflow.com/a/60197203/9288365
+            getIsDefault().set(true)
+            dimension "env"
+            applicationIdSuffix ".development"
+            versionNameSuffix "-development"
+            ext {
+                disneyApiBaseUrl = "https://api.disneyapi.dev"
+            }
+        }
+
+        // Staging environment: environment where QA team can execute all tests and evaluations.
+        staging {
+            dimension "env"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            ext {
+                // FIXME: This should be the staging url
+                disneyApiBaseUrl = "https://api.disneyapi.dev"
+            }
+        }
+
+        // Production environment: environment that final users will interact with.
+        production {
+            dimension "env"
+            ext {
+                // FIXME: This should be the production url
+                disneyApiBaseUrl = "https://api.disneyapi.dev"
+            }
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        // Get default app name and add custom environment and build type information
+        def appName = variant.mergedFlavor.resValues.get('app_name').getValue().toString()
+        variant.productFlavors.findAll { it.name != "production" }.each { flavor ->
+            // Add product flavors to name, excluding production flavor
+            appName += " ${flavor.name}"
+        }
+        if (variant.buildType.name != "release") {
+            // Add buildType name
+            appName += " ${variant.buildType.name}"
+        }
+        variant.resValue 'string', 'app_name', appName
+
+        // Set API url depending on flavor
+        def disneyApiBaseUrl = ""
+        variant.productFlavors.findAll { it.dimension == "env" }.each { flavor ->
+            disneyApiBaseUrl = flavor.hasProperty("disneyApiBaseUrl") ? flavor.disneyApiBaseUrl : ""
+        }
+
+        buildConfigField "String", "DISNEY_API_BASE_URL", "\"${disneyApiBaseUrl}\""
+    }
+
+    sourceSets {
+        // Add kotlin folders as possible source folders
+        all {
+            java.srcDirs += "src/${name}/kotlin"
+        }
+
+        // Add common test folder so both androidTest and test can share common classes
+        test {
+            java.srcDirs += ["$projectDir/src/testShared/java", "$projectDir/src/testShared/kotlin"]
+        }
+
+        androidTest {
+            java.srcDirs += ["$projectDir/src/testShared/java", "$projectDir/src/testShared/kotlin"]
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+        useIR = true
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xuse-experimental=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-Xuse-experimental=com.google.accompanist.pager.ExperimentalPagerApi"]
+    }
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+
+    // Keep a copy of the proguard file with proper name and stuff
+    applicationVariants.all { variant ->
+        if (variant.buildType.isMinifyEnabled()) {
+            variant.assembleProvider.get().doLast {
+                def mappingFileCollection = (variant.mappingFileProvider.get() as ConfigurableFileCollection)
+
+                def mappingFile = mappingFileCollection.singleFile
+                def newMappingFile = new File(
+                        mappingFile.parent,
+                        "${archivesBaseName}-${variant.baseName}-mapping.txt"
+                )
+
+                // Copy mapping file to new path
+                mappingFile.withInputStream { stream -> newMappingFile << stream }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    // Android support core and architecture libs
+    implementation "androidx.core:core-ktx:1.7.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+
+    // Jetpack Compose and UI
+    implementation "com.google.android.material:material:1.5.0"
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.activity:activity-compose:1.4.0"
+    implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
+    implementation "io.coil-kt:coil-compose:1.4.0"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+
+    // Accompanist
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+
+    // Flux architecture: Mini
+    implementation "com.github.hyperdevs-team.mini-kotlin:mini-android:$mini_version"
+    implementation "com.github.hyperdevs-team.mini-kotlin:mini-kodein:$mini_version"
+    implementation "com.github.hyperdevs-team.mini-kotlin:mini-kodein-android:$mini_version"
+    implementation "com.github.hyperdevs-team.mini-kotlin:mini-kodein-android-compose:$mini_version"
+    kapt "com.github.hyperdevs-team.mini-kotlin:mini-processor:$mini_version"
+
+    // Dependency injection: Kodein
+    implementation "org.kodein.di:kodein-di-jvm:$kodein_version"
+    implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
+    implementation "org.kodein.di:kodein-di-conf-jvm:$kodein_version"
+    implementation "org.kodein.di:kodein-di-framework-compose:$kodein_version"
+
+    // Network utils
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:retrofit-mock:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+    implementation "com.squareup.moshi:moshi-adapters:$moshi_version"
+    // TODO: Needed if firestore is used because it overrides okhttp and grpc internally does it too and conflict and
+    //  crash in tablets emulators. Check if it is needed in the future
+    /* implementation ('io.grpc:grpc-okhttp:1.40.1') {
+        exclude group: "com.squareup.okhttp"
+    }
+     */
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')  {
+        // TODO: Needed because firestore overrides okhttp and grpc internally does it too and conflict and crash in tablets
+        //       emulators. Check if it is needed in the future
+        exclude group: "com.squareup.okhttp"
+    }
+    implementation "com.google.firebase:firebase-auth-ktx"
+    implementation "com.google.firebase:firebase-firestore-ktx"
+    implementation "com.google.firebase:firebase-messaging"
+    implementation "com.google.firebase:firebase-crashlytics"
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-config'
+    
+    // Video
+    implementation "com.google.android.exoplayer:exoplayer:2.16.1"
+
+    // Utils
+    implementation "com.jakewharton.timber:timber:5.0.1"
+    // Java 8+ API desugaring support
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
+
+    // Detekt formatting plugin
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${detekt_version}")
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+}
+
+poEditor {
+    apiToken = poeditor_api_token
+    defaultLang = "en"
+    projectId = 450151
+    defaultResPath = "${project.rootDir}/app/src/main/res"
+}
+
+redacted {
+    enabled = true
+    // Uncomment if you want to disable the plugin in debug builds
+    /*
+    androidVariantFilter {
+        // Don't enable on debug
+        if (buildType.name == "debug") {
+            overrideEnabled(false)
+        }
+    }
+     */
+}
+
+easylauncher {
+    productFlavors {
+        development {
+            filters chromeLike("dev")
+        }
+        staging {
+            filters chromeLike("staging")
+        }
+        production {
+            enable false
+        }
+    }
+}
+
+afterEvaluate {
+    detekt {
+        toolVersion = detekt_version
+        input = files(android.sourceSets.collect { it.java.srcDirs.collect { it.path } }.flatten())
+        config = files("${project.rootDir}/config/detekt/detekt.yml")
+    }
+}
