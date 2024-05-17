@@ -36,9 +36,12 @@ import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
-import androidx.lifecycle.ViewTreeLifecycleOwner
-import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
+import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.hyperdevs.arch_example.R
 import com.google.accompanist.insets.LocalWindowInsets
 import java.util.*
@@ -170,9 +173,9 @@ private class DialogLayout(context: Context,
     }
 
     fun setAsComposeContentIn(dialog: Dialog, composeView: View) {
-        ViewTreeLifecycleOwner.set(this, ViewTreeLifecycleOwner.get(composeView))
-        ViewTreeViewModelStoreOwner.set(this, ViewTreeViewModelStoreOwner.get(composeView))
-        ViewTreeSavedStateRegistryOwner.set(this, ViewTreeSavedStateRegistryOwner.get(composeView))
+        this.setViewTreeLifecycleOwner(composeView.findViewTreeLifecycleOwner())
+        this.setViewTreeViewModelStoreOwner(composeView.findViewTreeViewModelStoreOwner())
+        this.setViewTreeSavedStateRegistryOwner(composeView.findViewTreeSavedStateRegistryOwner())
         dialog.setContentView(this)
     }
 }

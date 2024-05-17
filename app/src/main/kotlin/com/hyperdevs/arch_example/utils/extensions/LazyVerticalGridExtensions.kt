@@ -18,8 +18,8 @@
 
 package com.hyperdevs.arch_example.utils.extensions
 
-import androidx.compose.foundation.lazy.LazyGridScope
-import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Composable
 import androidx.paging.compose.LazyPagingItems
 
@@ -27,7 +27,7 @@ import androidx.paging.compose.LazyPagingItems
  * Use paginated items for the [LazyVerticalGrid].
  */
 fun <T : Any> LazyGridScope.items(lazyPagingItems: LazyPagingItems<T>,
-                                  itemContent: @Composable LazyItemScope.(value: T?) -> Unit) {
+                                  itemContent: @Composable LazyGridItemScope.(value: T?) -> Unit) {
     items(lazyPagingItems.itemCount) { index ->
         itemContent(lazyPagingItems[index])
     }
@@ -37,7 +37,7 @@ fun <T : Any> LazyGridScope.items(lazyPagingItems: LazyPagingItems<T>,
  * Use paginated items for the [LazyVerticalGrid] and in each item is aware of its index.
  */
 fun <T : Any> LazyGridScope.itemsIndexed(lazyPagingItems: LazyPagingItems<T>,
-                                         itemContent: @Composable LazyItemScope.(index: Int, value: T?) -> Unit) {
+                                         itemContent: @Composable LazyGridItemScope.(index: Int, value: T?) -> Unit) {
     items(lazyPagingItems.itemCount) { index ->
         itemContent(index, lazyPagingItems[index])
     }

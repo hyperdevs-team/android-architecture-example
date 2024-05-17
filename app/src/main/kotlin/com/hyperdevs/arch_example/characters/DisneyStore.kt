@@ -27,6 +27,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import mini.Dispatcher
 import mini.Reducer
+import mini.State
 import mini.Store
 import mini.Task
 import mini.kodein.bindStore
@@ -39,7 +40,8 @@ import org.kodein.di.singleton
 data class DisneyCharacterState(val getDisneyCharactersTask: Task = Task.idle(),
                                 val getDisneyCharacterDetailsTasks: Map<DisneyCharacterId, Task> = emptyMap(),
                                 val disneyCharactersPaginatedStream: Flow<PagingData<DisneyCharacter>>? = null,
-                                val disneyCharacterDetails: Map<DisneyCharacterId, DisneyCharacter> = emptyMap()) {
+                                val disneyCharacterDetails: Map<DisneyCharacterId, DisneyCharacter> = emptyMap())
+    :State {
 
     override fun toString(): String = "DisneyState(" +
         "disneyCharactersTask=$getDisneyCharactersTask, " +

@@ -19,6 +19,7 @@
 package com.hyperdevs.arch_example.crashreporting
 
 import mini.Reducer
+import mini.State
 import mini.Store
 import mini.kodein.bindStore
 import org.kodein.di.DI
@@ -31,7 +32,7 @@ import org.kodein.di.singleton
  * We need it to be a data class with any value so the compilation doesn't crash with proguard since using the android
  * gradle plugin 4.2.0.
  */
-data class CrashReportingState(private val empty: String? = null)
+data class CrashReportingState(private val empty: String? = null): State
 
 /**
  * Store that handles reporting data to the crash reporting service.

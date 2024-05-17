@@ -19,6 +19,7 @@
 package com.hyperdevs.arch_example.connectivity
 
 import mini.Reducer
+import mini.State
 import mini.Store
 import mini.Task
 import mini.kodein.bindStore
@@ -29,7 +30,7 @@ import org.kodein.di.singleton
 
 @Suppress("UndocumentedPublicClass")
 data class ConnectivityState(val hasInternetConnection: Boolean = true,
-                             val listenToConnectivityChangesTask: Task = Task.idle())
+                             val listenToConnectivityChangesTask: Task = Task.idle()): State
 
 /**
  * Store that manages the Internet connection status.

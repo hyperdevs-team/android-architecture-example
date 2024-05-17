@@ -22,17 +22,40 @@ package com.hyperdevs.arch_example.network.models
  * Object representing the Disney API response.
  */
 data class DisneyPaginatedCharacters(
+    val info: NetworkDisneyPaginatedCharactersInfo,
+    val data: List<NetworkDisneyCharacterData>
+)
+
+/**
+ * Object representing the Disney API response page info.
+ */
+data class NetworkDisneyPaginatedCharactersInfo(
     val count: Int,
+    val totalPages: Int,
     val nextPage: String?,
     val previousPage: String?,
-    val data: List<NetworkDisneyCharacter>
 )
 
 /**
  * Object representing the Disney Character inside the API response.
  */
-@Suppress("ConstructorParameterNaming")
 data class NetworkDisneyCharacter(
+    val info: NetworkDisneyCharacterInfo,
+    val data: NetworkDisneyCharacterData
+)
+
+/**
+ * Object representing the Disney Character info inside the API response.
+ */
+data class NetworkDisneyCharacterInfo(
+    val count: Int
+)
+
+/**
+ * Object representing the Disney Character data inside the API response.
+ */
+@Suppress("ConstructorParameterNaming")
+data class NetworkDisneyCharacterData(
     val __v: Int = -1,
     val _id: DisneyCharacterId = -1,
     val allies: List<String> = emptyList(),
@@ -52,6 +75,27 @@ data class NetworkDisneyCharacter(
 
 @Suppress("UndocumentedPublicFunction")
 fun NetworkDisneyCharacter.toDisneyCharacter() =
+    with(data) {
+        DisneyCharacter(
+            id = _id,
+            allies = allies,
+            createdAt = createdAt,
+            enemies = enemies,
+            films = films,
+            imageUrl = imageUrl,
+            name = name,
+            parkAttractions = parkAttractions,
+            shortFilms = shortFilms,
+            sourceUrl = sourceUrl,
+            tvShows = tvShows,
+            updatedAt = updatedAt,
+            url = url,
+            videoGames = videoGames
+        )
+    }
+
+@Suppress("UndocumentedPublicFunction")
+fun NetworkDisneyCharacterData.toDisneyCharacter() =
     DisneyCharacter(
         id = _id,
         allies = allies,

@@ -18,13 +18,14 @@
 
 package com.hyperdevs.arch_example.characters.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyGridScope
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -60,6 +61,7 @@ import com.hyperdevs.arch_example.utils.extensions.showToast
 
 private const val LOADING_CHARACTERS_COUNT = 8
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @Suppress("UndocumentedPublicFunction")
 fun CharactersScreen(modifier: Modifier,
@@ -116,7 +118,7 @@ private fun Characters(charactersStream: LazyPagingItems<DisneyCharacter>?,
         }
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
-            cells = GridCells.Fixed(ResValues.general_grid_cells),
+            columns = GridCells.Fixed(ResValues.general_grid_cells),
             contentPadding = PaddingValues(Dimens.generalDimens.layout_padding),
             verticalArrangement = Arrangement.spacedBy(Dimens.characterDimens.card_items_space_in_grid),
             horizontalArrangement = Arrangement.spacedBy(Dimens.characterDimens.card_items_space_in_grid)

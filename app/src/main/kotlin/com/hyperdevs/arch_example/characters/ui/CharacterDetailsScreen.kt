@@ -18,6 +18,7 @@
 
 package com.hyperdevs.arch_example.characters.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,10 +49,8 @@ import com.hyperdevs.arch_example.ui.components.commons.ImageFromUrl
 import com.hyperdevs.arch_example.ui.components.commons.ScrimCircularProgressIndicator
 import com.hyperdevs.arch_example.ui.theme.Dimens
 import com.hyperdevs.arch_example.utils.extensions.showToast
-import mini.onFailure
-import mini.onLoading
-import mini.onSuccess
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @Suppress("UndocumentedPublicFunction")
 fun CharacterDetailsScreen(modifier: Modifier,
@@ -95,18 +94,19 @@ fun CharacterDetailsScreen(modifier: Modifier,
         }
     ) {
         Box(Modifier.fillMaxSize()) {
-            characterResource
-                .onLoading {
-                    ScrimCircularProgressIndicator(Modifier.fillMaxSize())
-                }
-                .onSuccess {
-                    Character(character = it.disneyCharacter) {
-                        characterDetailsViewModel.refresh()
+            when {
+                characterResource.isLoading -> {
+                        ScrimCircularProgressIndicator(Modifier.fillMaxSize())
                     }
+                characterResource.isSuccess -> {
+                        Character(character = characterResource.getOrNull()?.disneyCharacter!!) {
+                            characterDetailsViewModel.refresh()
+                        }
                 }
-                .onFailure {
+                characterResource.isFailure -> {
                     ErrorScreen(R.string.character_error_message)
                 }
+            }
         }
     }
 }
@@ -178,6 +178,7 @@ private fun CharacterInfo(modifier: Modifier, character: DisneyCharacter) {
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun CharacterImage(character: DisneyCharacter) {
     BoxWithConstraints {

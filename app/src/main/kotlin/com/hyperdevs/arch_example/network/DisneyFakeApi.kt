@@ -21,6 +21,7 @@ package com.hyperdevs.arch_example.network
 import com.hyperdevs.arch_example.debug.previews.CharactersMocks
 import com.hyperdevs.arch_example.network.models.DisneyCharacterId
 import com.hyperdevs.arch_example.network.models.DisneyPaginatedCharacters
+import com.hyperdevs.arch_example.network.models.NetworkDisneyPaginatedCharactersInfo
 import com.hyperdevs.arch_example.network.models.NetworkDisneyCharacter
 import kotlinx.coroutines.delay
 
@@ -32,10 +33,13 @@ class DisneyFakeApi: DisneyApi {
         mockServerWork()
         val characters = CharactersMocks.getCharactersMock()
         return DisneyPaginatedCharacters(
-            count = characters.size,
-            nextPage = "2",
-            previousPage = null,
-            data = characters
+            info = NetworkDisneyPaginatedCharactersInfo(
+                count = characters.size,
+                totalPages = 13,
+                nextPage = "2",
+                previousPage = null,
+            ),
+            data = characters.map { it.data }
         )
     }
 

@@ -69,7 +69,7 @@ class DisneyCharacterControllerImpl(private val disneyApi: DisneyApi,
                             val pageNumber = params.key ?: INITIAL_PAGE_NUMBER
                             val disneyCharactersData = disneyApi.getCharacters(pageNumber)
                             val disneyCharacters = disneyCharactersData.data.map { it.toDisneyCharacter() }
-                            val isLastPage = disneyCharactersData.nextPage.isNullOrBlank()
+                            val isLastPage = disneyCharactersData.info.nextPage.isNullOrBlank()
                             LoadResult.Page(
                                 data = disneyCharacters,
                                 prevKey = if (pageNumber == INITIAL_PAGE_NUMBER) null else pageNumber - NEXT_PAGE_STEP,

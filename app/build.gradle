@@ -49,10 +49,10 @@ ext {
      *
      ********************
      */
-    compile_sdk_version = 31
+    compile_sdk_version = 34
     min_sdk_version = 22
-    target_sdk_version = 31
-    build_tools_version = "30.0.3"
+    target_sdk_version = 34
+    build_tools_version = "34.0.0"
 
     // The Android version is multiplied by a big number so it is placed in the leftmost part
     // of the version code because we can't add it in androidGitVersion's codeFormat parameter
@@ -66,12 +66,12 @@ ext {
      *
      *******************
      */
-    mini_version = "3.0.0"
-    kodein_version = "7.10.0"
+    mini_version = "4.0.0"
+    kodein_version = "7.21.2"
     retrofit_version = "2.9.0"
-    okhttp_version = "4.9.1"
-    moshi_version = "1.13.0"
-    accompanist_version = "0.20.3"
+    okhttp_version = "4.11.0"
+    moshi_version = "1.15.0"
+    accompanist_version = "0.30.1"
 
     poeditor_api_token = loadPropertiesFile("settings.properties")["poEditorApiToken"] ?: ""
 }
@@ -153,7 +153,7 @@ android {
 
     android.applicationVariants.all { variant ->
         // Get default app name and add custom environment and build type information
-        def appName = variant.mergedFlavor.resValues.get('app_name').getValue().toString()
+        def appName = variant.mergedFlavor.resValues.get('string/app_name').getValue().toString()
         variant.productFlavors.findAll { it.name != "production" }.each { flavor ->
             // Add product flavors to name, excluding production flavor
             appName += " ${flavor.name}"
@@ -190,14 +190,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
-        jvmTarget = '11'
-        useIR = true
+        jvmTarget = '17'
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-Xuse-experimental=androidx.compose.foundation.ExperimentalFoundationApi",
@@ -208,8 +207,9 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion compose_compiler
     }
+    namespace 'com.hyperdevs.arch_example'
 
     // Keep a copy of the proguard file with proper name and stuff
     applicationVariants.all { variant ->
@@ -233,18 +233,18 @@ android {
 dependencies {
 
     // Android support core and architecture libs
-    implementation "androidx.core:core-ktx:1.7.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
 
     // Jetpack Compose and UI
-    implementation "com.google.android.material:material:1.5.0"
+    implementation "com.google.android.material:material:1.11.0"
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation "androidx.activity:activity-compose:1.4.0"
-    implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
-    implementation "io.coil-kt:coil-compose:1.4.0"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    implementation "androidx.activity:activity-compose:1.8.2"
+    implementation "androidx.navigation:navigation-compose:2.7.7"
+    implementation "io.coil-kt:coil-compose:2.0.0"
+    implementation "androidx.paging:paging-compose:3.2.1"
 
     // Accompanist
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
@@ -317,7 +317,7 @@ dependencies {
 poEditor {
     apiToken = poeditor_api_token
     defaultLang = "en"
-    projectId = 450151
+    projectId = 000000 // Change this to the real one
     defaultResPath = "${project.rootDir}/app/src/main/res"
 }
 

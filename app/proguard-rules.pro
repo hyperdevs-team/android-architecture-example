@@ -14,15 +14,71 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-renamesourcefileattribute SourceFile
 
 # These rules are needed by multiple libs (especially the ones that rely on reflection)
 -keepattributes Signature,Annotation,Exceptions,SourceFile,LineNumberTable,InnerClasses,EnclosingMethod,ElementList,Root,RuntimeVisible*Annotations
 
 ### Libs
 
+## Kodein
+-keep, allowobfuscation, allowoptimization class org.kodein.type.TypeReference
+-keep, allowobfuscation, allowoptimization class org.kodein.type.JVMAbstractTypeToken$Companion$WrappingTest
+
+-keep, allowobfuscation, allowoptimization class * extends org.kodein.type.TypeReference
+-keep, allowobfuscation, allowoptimization class * extends org.kodein.type.JVMAbstractTypeToken$Companion$WrappingTest
+
+## Retrofit
+-keep class retrofit2.** { *; }
+-keep interface retrofit2.** { *; }
+
+## Retrofit does reflection on method and parameter annotations.
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+## Keep annotation default values (e.g., retrofit2.http.Field.encoded).
+-keepattributes AnnotationDefault
+
+## Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+#
+## Ignore JSR 305 annotations for embedding nullability information.
+-dontwarn javax.annotation.**
+
+## Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
+-dontwarn kotlin.Unit
+
+## Top-level functions that can only be used by Kotlin.
+-dontwarn retrofit2.KotlinExtensions
+-dontwarn retrofit2.KotlinExtensions$*
+
+## With R8 full mode, it sees no subtypes of Retrofit interfaces since they are created with a Proxy
+## and replaces all potential values with null. Explicitly keeping the interfaces prevents this.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
+
+## Keep inherited services.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+## With R8 full mode generic signatures are stripped for classes that are not
+## kept. Suspend functions are wrapped in continuations where the type argument
+## is used.
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+## R8 full mode strips generic signatures from return types if not kept.
+-if interface * { @retrofit2.http.* public *** *(...); }
+-keep,allowoptimization,allowshrinking,allowobfuscation class <3>
+
 ### App specific models
+## Network models
+-keep class com.hyperdevs.arch_example.network.models.** { *; }
+
+## Debug utils
+# Uncomment this to print which classes have been removed and which ones maintained
+#-printusage proguard-usage.txt

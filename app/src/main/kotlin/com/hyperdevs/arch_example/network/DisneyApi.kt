@@ -31,9 +31,9 @@ import retrofit2.http.Query
 @Suppress("UndocumentedPublicFunction")
 interface DisneyApi {
 
-    @GET("/characters")
+    @GET("/character")
     suspend fun getCharacters(@Query("page") pageNumber: Int): DisneyPaginatedCharacters
 
-    @GET("/characters/{id}")
+    @GET("/character/{id}")
     suspend fun getCharacterById(@Path("id") id: DisneyCharacterId): NetworkDisneyCharacter
 }

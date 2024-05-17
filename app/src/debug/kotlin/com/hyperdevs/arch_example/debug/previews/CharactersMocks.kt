@@ -19,6 +19,8 @@
 package com.hyperdevs.arch_example.debug.previews
 
 import com.hyperdevs.arch_example.network.models.NetworkDisneyCharacter
+import com.hyperdevs.arch_example.network.models.NetworkDisneyCharacterData
+import com.hyperdevs.arch_example.network.models.NetworkDisneyCharacterInfo
 
 @Suppress("UndocumentedPublicClass", "MaxLineLength")
 object CharactersMocks {
@@ -26,16 +28,26 @@ object CharactersMocks {
     fun getCharactersMock() =
         listOf(
             NetworkDisneyCharacter(
-                name = "Queen Arianna",
-                imageUrl =
+                info = NetworkDisneyCharacterInfo(
+                  count = 1,
+                ),
+                data = NetworkDisneyCharacterData(
+                    name = "Queen Arianna",
+                    imageUrl =
                 "https://static.wikia.nocookie.net/disney/images/1/15/Arianna_Tangled.jpg/revision/latest?cb=20160715191802",
-                films = listOf("Tangled", "Tangled: Before Ever After")
+                    films = listOf("Tangled", "Tangled: Before Ever After")
+                )
             ),
             NetworkDisneyCharacter(
-                name = "Queen Arianna",
-                imageUrl =
-                "https://static.wikia.nocookie.net/disney/images/1/15/Arianna_Tangled.jpg/revision/latest?cb=20160715191802",
-                films = listOf("Tangled", "Tangled: Before Ever After")
+                info = NetworkDisneyCharacterInfo(
+                    count = 1,
+                ),
+                data = NetworkDisneyCharacterData(
+                    name = "Queen Arianna",
+                    imageUrl =
+                    "https://static.wikia.nocookie.net/disney/images/1/15/Arianna_Tangled.jpg/revision/latest?cb=20160715191802",
+                    films = listOf("Tangled", "Tangled: Before Ever After")
+                )
             )
         )
 }

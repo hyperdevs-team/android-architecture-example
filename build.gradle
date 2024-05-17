@@ -19,8 +19,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = "1.6.0"
-        compose_version = "1.1.0-rc01"
+        kotlin_version = "1.9.22"
+        compose_compiler = "1.5.9"
+        compose_version = "1.6.1"
         detekt_version = "1.19.0"
     }
     repositories {
@@ -30,14 +31,14 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:8.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.github.hyperdevs-team:poeditor-android-gradle-plugin:2.4.2"
+        classpath "com.github.hyperdevs-team:poeditor-android-gradle-plugin:4.2.0"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
         classpath "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
         classpath "com.gladed.androidgitversion:gradle-android-git-version:0.4.14"
-        classpath "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:1.0.1"
-        classpath "com.project.starter:easylauncher:5.0.0"
+        classpath "dev.zacsweers.redacted:redacted-compiler-plugin-gradle:1.7.1"
+        classpath "com.project.starter:easylauncher:6.2.0"
 
 //        classpath "com.google.gms:google-services:4.3.10"
 //        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
